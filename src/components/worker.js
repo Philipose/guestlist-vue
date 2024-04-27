@@ -1,5 +1,5 @@
-// worker.js
-
+// worker.jsself.onmessage = function(event) {
+console.log('Worker: Components Message received from main script');
 self.onmessage = function(event) {
     const { party, table } = event.data;
     const partyMembers = Object.values(party);
@@ -24,6 +24,8 @@ self.onmessage = function(event) {
     }).join('');
   
     // Send back the constructed HTML to the main thread
+    console.log("Worker Results\n",partyHTML, tableHTML);
+    // self.postMessage({ "<tr><td>test-P</td></tr>", "<tr><td>test-T</td></tr>" });
     self.postMessage({ partyHTML, tableHTML });
-  };
+  }; 
   
