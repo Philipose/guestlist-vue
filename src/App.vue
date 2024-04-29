@@ -1,17 +1,20 @@
 <script setup>
 
-import { ref, computed } from 'vue'
-import PersonItem from './components/PersonItem.vue';
+import { ref, computed } from 'vue';
 import weddingData from './assets/wedding.json'
 
 const weddingList = ref(weddingData)
 const search = ref('')
-let debounceTimer;
-let searchTimer;
+
+const headers = [
+  { text: 'Name', value: 'First Name' },
+  { text: 'Table', value: 'Table' },
+  { text: '', value: 'actions', sortable: false },
+]
 
 const searchList = computed(() => {
   if(search.value.length < 3) {
-    return
+    return []
   }
   return weddingList.value.filter(person => (person['First Name']+ ' ' + person['Last Name']).toLowerCase().includes(search.value.toLowerCase()))
 })
@@ -29,22 +32,19 @@ function getTableMembers(table, person) {
   })
 }
 
-const handleSearchChange = () => {
-  clearTimeout(debounceTimer);
-  clearTimeout(searchTimer);
-  
-  // Debounce the search initiation
-  debounceTimer = setTimeout(() => {
-    // Only start the search if the input value has changed during the debounce period
-    if (search.value !== searchInput) {
-      return;
-    }
-
-    // Initiate the search after the debounce time and an additional delay
-    searchTimer = setTimeout(() => {
-      console.log('Perform search:', search.value);
-    }, 1000); // Additional delay before starting the search
-  }, 1000); // Debounce time for typing delay
+function getFormattedPartyandTableMembers(person) {
+  console.log(person)
+  const party = getPartyMembers(person['Party'], person)
+  const table = getTableMembers(person['Table'], person)
+  let fullInfo = "Party Members:\n"
+  for (let i = 0; i < party.length; i++) {
+    fullInfo= fullInfo + party[i]['First Name'] + " " + party[i]['Last Name'] + " - Table: " + party[i]['Table'] + "\n"
+  }
+  fullInfo = fullInfo + "\nTable Members:\n"
+  for (let i = 0; i < table.length; i++) {
+    fullInfo= fullInfo + table[i]['First Name'] + " " + table[i]['Last Name'] + " - Table: " + table[i]['Table'] + "\n"
+  }
+  return fullInfo
 }
 
 let searchInput = '';
@@ -52,39 +52,43 @@ const handleInput = () => {
   searchInput = search.value;
   handleSearchChange();
 }
+
+const loadIntroduction = async (index) => {
+  const expandedItem = searchList.value[index];
+  // console.log(expandedItem);
+  if (!expandedItem.introduction) {
+    expandedItem.expandLoading = true;
+    try {
+      expandedItem.introduction = await getFormattedPartyandTableMembers(expandedItem);
+    } catch (error) {
+      console.error('Failed to load introduction:', error);
+      // Optionally, you can handle errors more gracefully here, e.g., showing an error message to the user
+    }    expandedItem.expandLoading = false;
+  }
+  console.log(expandedItem.introduction)
+};
 </script>
 
 <template>
-  <header>
-    <!-- <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" /> -->
     <div class="max-w-4xl mx-auto py-5">
-      <input v-model="search" @input="handleInput" class="w-full flex justify-center mb-4">
-      <div class="wrapper mb-4">
-        <div class="p-2 border">
-          <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-              <tr>
-                <th scope="col" class="px-6 py-3">Name</th>
-                <th scope="col" class="px-6 py-3">Table</th>
-                <th scope="col" class="px-6 py-3"></th>
-              </tr>
-            </thead>
-            <tbody>
-              <PersonItem
-                @input="handleInput" v-for="person in searchList"
-                :person="person"
-                :party="getPartyMembers(person['Party'], person)"
-                :table="getTableMembers(person['Table'], person)"
-              >
-              </PersonItem>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
+      <input v-model="search" class="w-full rounded-lg justify-items-center flex justify-center mb-4" placeholder="Type Your Name Here">
     </div>
-  </header>
 
+    <EasyDataTable
+    :headers="headers"
+    :items="searchList"
+    :table-class-name="'w-full rounded-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400'"
+    @expand-row="loadIntroduction"
+  >
+    <template #expand="item">
+      <div
+        v-if="item.introduction"
+        style="padding: 15px; white-space: pre;"
+      >
+        {{ item.introduction }}
+      </div>
+    </template>
+  </EasyDataTable>
 </template>
 
 <style scoped>

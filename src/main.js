@@ -3,8 +3,10 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import './assets/css/index.css'
-import VueDOMPurifyHTML from 'vue-dompurify-html'
+import Vue3EasyDataTable from 'vue3-easy-data-table';
+import 'vue3-easy-data-table/dist/style.css';
+
 
 const app = createApp(App)
-app.use(VueDOMPurifyHTML);
+app.component('EasyDataTable', Vue3EasyDataTable);
 app.mount('#app')
