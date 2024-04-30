@@ -33,7 +33,6 @@ function getTableMembers(table, person) {
 }
 
 function getFormattedPartyandTableMembers(person) {
-  console.log(person)
   const party = getPartyMembers(person['Party'], person)
   const table = getTableMembers(person['Table'], person)
   let fullInfo = "Party Members:\n"
@@ -55,7 +54,6 @@ const handleInput = () => {
 
 const loadIntroduction = async (index) => {
   const expandedItem = searchList.value[index];
-  // console.log(expandedItem);
   if (!expandedItem.introduction) {
     expandedItem.expandLoading = true;
     try {
@@ -71,7 +69,7 @@ const loadIntroduction = async (index) => {
 
 <template>
     <div class="max-w-4xl mx-auto py-5">
-      <input v-model="search" class="w-full rounded-lg justify-items-center flex justify-center mb-4" placeholder="Type Your Name Here">
+      <input v-model="search" class="w-full rounded-lg flex mb-4" placeholder="Type Your Name Here">
     </div>
 
     <EasyDataTable
