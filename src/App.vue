@@ -35,7 +35,7 @@ function getTableMembers(table, person) {
 function getFormattedPartyandTableMembers(person) {
   const party = getPartyMembers(person['Party'], person)
   const table = getTableMembers(person['Table'], person)
-  let fullInfo = "Table: " + person['Table'] + "\nFood: " + person['Food'] + "\n\n"
+  let fullInfo = "Table: " + person['Table'] + "\nFood Choice: " + person['Food'] + "\n\n"
   if (party.length > 0){
     fullInfo = fullInfo + "Party Members:\n"
     for (let i = 0; i < party.length; i++) {
