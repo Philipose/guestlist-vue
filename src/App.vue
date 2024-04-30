@@ -7,41 +7,47 @@ const weddingList = ref(weddingData)
 const search = ref('')
 
 const headers = [
-  { text: 'Name', value: 'First Name' },
+  { text: 'Name', value: 'Name' },
   { text: 'Table', value: 'Table' },
   { text: '', value: 'actions', sortable: false },
 ]
 
 const searchList = computed(() => {
-  if(search.value.length < 3) {
-    return []
+  if(search.value.length < 1) {
+    return weddingList.value
   }
-  return weddingList.value.filter(person => (person['First Name']+ ' ' + person['Last Name']).toLowerCase().includes(search.value.toLowerCase()))
+  return weddingList.value.filter(person => (person['Name']).toLowerCase().includes(search.value.toLowerCase()))
 })
 
 
 function getPartyMembers(party, person) {
   return weddingData.filter(partyMember => {
-    return party == partyMember['Party'] && (person['First Name']+person['Last Name'] !== partyMember['First Name']+partyMember['Last Name'])
+    return party == partyMember['Party'] && (person['Name'] !== partyMember['Name'])
   })
 }
 
 function getTableMembers(table, person) {
   return weddingData.filter(tableMember => {
-    return table == tableMember['Table'] && (person['First Name']+person['Last Name'] !== tableMember['First Name']+tableMember['Last Name'] && person["Party"] !== tableMember["Party"])
+    return table == tableMember['Table'] && (person['Name'] !== tableMember['Name'] && person["Party"] !== tableMember["Party"])
   })
 }
 
 function getFormattedPartyandTableMembers(person) {
   const party = getPartyMembers(person['Party'], person)
   const table = getTableMembers(person['Table'], person)
-  let fullInfo = "Party Members:\n"
-  for (let i = 0; i < party.length; i++) {
-    fullInfo= fullInfo + party[i]['First Name'] + " " + party[i]['Last Name'] + " - Table: " + party[i]['Table'] + "\n"
+  let fullInfo = ""
+  if (party.length > 0){
+    fullInfo = fullInfo + "Party Members:\n"
+    for (let i = 0; i < party.length; i++) {
+      fullInfo= fullInfo + party[i]['Name']+ " - Table: " + party[i]['Table'] + "\n"
+    }
+    fullInfo = fullInfo + "\n"
   }
-  fullInfo = fullInfo + "\nTable Members:\n"
-  for (let i = 0; i < table.length; i++) {
-    fullInfo= fullInfo + table[i]['First Name'] + " " + table[i]['Last Name'] + " - Table: " + table[i]['Table'] + "\n"
+  if (table.length > 0){
+    fullInfo = fullInfo + "Other People in Table " + person['Table'] + ":\n"
+    for (let i = 0; i < table.length; i++) {
+      fullInfo= fullInfo + table[i]['Name'] + "\n"
+    }
   }
   return fullInfo
 }
