@@ -35,7 +35,7 @@ function getTableMembers(table, person) {
 function getFormattedPartyandTableMembers(person) {
   const party = getPartyMembers(person['Party'], person)
   const table = getTableMembers(person['Table'], person)
-  let fullInfo = ""
+  let fullInfo = "Table: " + person['Table'] + "\nFood: " + person['Food'] + "\n\n"
   if (party.length > 0){
     fullInfo = fullInfo + "Party Members:\n"
     for (let i = 0; i < party.length; i++) {
@@ -79,9 +79,11 @@ const loadIntroduction = async (index) => {
     </div>
 
     <EasyDataTable
+    :fixed-header="false"
+    :alternating="true"
     :headers="headers"
     :items="searchList"
-    :table-class-name="'w-full rounded-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400'"
+    :table-class-name="'customize-table w-full rounded-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400'"
     @expand-row="loadIntroduction"
   >
     <template #expand="item">
@@ -121,5 +123,47 @@ header {
     place-items: flex-start;
     flex-wrap: wrap;
   }
+}
+.customize-table {
+  --easy-table-border: 1px solid #445269;
+  --easy-table-row-border: 1px solid #445269;
+
+  --easy-table-header-font-size: 14px;
+  --easy-table-header-height: 50px;
+  --easy-table-header-font-color: #fff;
+  --easy-table-header-background-color: #8C9473;
+
+  --easy-table-header-item-padding: 10px 15px;
+
+  --easy-table-body-even-row-font-color: #fff;
+  --easy-table-body-even-row-background-color: #8C9473;
+
+  --easy-table-body-row-font-color: #fff;
+  --easy-table-body-row-background-color: #71785c;
+  --easy-table-body-row-height: 50px;
+  --easy-table-body-row-font-size: 14px;
+
+  --easy-table-body-row-hover-font-color: #fff;
+  --easy-table-body-row-hover-background-color: #2d3a4f;
+
+  --easy-table-body-item-padding: 10px 15px;
+
+  --easy-table-footer-background-color: #2d3a4f;
+  --easy-table-footer-font-color: #c0c7d2;
+  --easy-table-footer-font-size: 14px;
+  --easy-table-footer-padding: 0px 10px;
+  --easy-table-footer-height: 50px;
+
+  --easy-table-rows-per-page-selector-width: 70px;
+  --easy-table-rows-per-page-selector-option-padding: 10px;
+  --easy-table-rows-per-page-selector-z-index: 1;
+
+
+  --easy-table-scrollbar-track-color: #2d3a4f;
+  --easy-table-scrollbar-color: #2d3a4f;
+  --easy-table-scrollbar-thumb-color: #4c5d7a;;
+  --easy-table-scrollbar-corner-color: #2d3a4f;
+
+  --easy-table-loading-mask-background-color: #2d3a4f;
 }
 </style>
